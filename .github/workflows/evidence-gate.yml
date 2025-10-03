@@ -1,9 +1,18 @@
 name: Evidence Gate
 on:
-  pull_request: { branches: [ main, develop ] }
-  workflow_dispatch: {}
-permissions: { contents: read }
-concurrency: { group: evidence-gate-${{ github.ref }}, cancel-in-progress: true }
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: evidence-gate-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   verify-evidence:
     runs-on: ubuntu-latest
@@ -12,6 +21,7 @@ jobs:
       - run: sudo apt-get update && sudo apt-get install -y jq
       - name: Check required evidence files
         run: |
+          set -e
           required=(
             artifacts/health/verification/CLAIMS.json
             artifacts/health/verification/REPO_STATS.json
@@ -28,4 +38,3 @@ jobs:
         run: |
           grep -q "ALL CLAIMS: PASS" artifacts/health/verification/VERIFICATION_REPORT.md \
             || { echo "::error ::Verification report not PASS"; exit 1; }
- 
