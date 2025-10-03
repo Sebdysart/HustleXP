@@ -28,3 +28,4 @@ jobs:
         run: |
           grep -q "ALL CLAIMS: PASS" artifacts/health/verification/VERIFICATION_REPORT.md \
             || { echo "::error ::Verification report not PASS"; exit 1; }
+ 
